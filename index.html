@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>留言板</title>
+    <style>
+        .liuyan {
+            width: 400px;
+            margin: 0 auto;
+        }
+        
+        .liuyan .shuru textarea {
+            border: 4px solid hotpink;
+        }
+        
+        button {
+            border: 1px solid grey;
+            background-color: burlywood;
+            width: 80px;
+            height: 32px;
+            font-size: 18px;
+        }
+        
+        ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        
+        ul li {
+            border: 2px solid hotpink;
+            background-color: aquamarine;
+            margin: 5px 0;
+            padding: 10px;
+            font-size: 18px;
+            line-height: 40px;
+            position: relative;
+        }
+        
+        .close {
+            position: absolute;
+            top: -12px;
+            right: 2px;
+        }
+        
+        li span {
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="liuyan">
+        <div class="shuru">
+            <textarea id="tt" cols="50" rows="10"></textarea>
+        </div>
+        <div>
+            <button id="add">提交</button> &nbsp;<button id="empty">清空</button>
+        </div>
+        <div class="liuyans">
+            <ul id="liuyans"></ul>
+        </div>
+    </div>
+    <script src="./cookie-0.1.1.js"></script>
+    <script>
+        var logged = cookie('logged');
+        if (logged != 'true') {
+            location = './login.html';
+        }
+        var tt = document.getElementById('tt');
+        var liuyanUi = document.getElementById('liuyans');
+        var liuyansall = [];
+        var exists = localStorage.getItem('liuyan');
+        console.log(exists);
+
+
+
+        if (exists) {
+            liuyansall = JSON.parse(exists);
+        }
+        console.log(liuyansall);
+        var html = '';
+        liuyansall.forEach(l => {
+            html += `<li><span>${l}</span><span role="rm" class="close">X</span></li>`;
+        });
+        liuyanUi.innerHTML = html;
+
+        document.getElementById('add').onclick = function() {
+            var ly = tt.value;
+            if (ly) {
+                liuyansall.push(ly);
+                console.log(liuyansall)
+                localStorage.setItem('liuyan', JSON.stringify(liuyansall));
+                var li = `<li><span>${ly}</span><span role="rm" class="close">X</span></li>`;
+                liuyanUi.innerHTML += li;
+            }
+            tt.value = '';
+        };
+
+
+
+        liuyanUi.onclick = function(e) {
+            var {
+                target
+            } = e;
+            var role = target.getAttribute('role');
+            if (target.tagName == 'SPAN' && role == 'rm' && confirm('确定吗？')) {
+                target.parentNode.parentNode.removeChild(target.parentNode);
+            }
+        };
+
+
+
+        document.getElementById('empty').onclick = function() {
+            localStorage.removeItem('liuyan');
+
+            liuyanUi.innerHTML = '';
+
+        };
+    </script>
+</body>
+
+</html>
