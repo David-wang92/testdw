@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        #box {
+            width: 400px;
+            border: 2px solid blue;
+            box-shadow: 2px 2px 2px;
+            margin: 20px auto;
+        }
+        
+        #row {
+            width: 200px;
+            margin: 5px auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="box">
+        <form id="myform">
+            <div id="row">
+                <label for="username">用户名</label>
+                <input type="text" name="username" id="username" placeholder="用户名" required>
+            </div>
+            <div id="row">
+                <label for="password">密码</label>
+                <input type="password" name="password" id="password" placeholder="密码" required>
+            </div>
+            <div id="row">
+                <button>login..</button>
+            </div>
+        </form>
+    </div>
+    <script src="./ajax-1.1.2.js"></script>
+    <script src="./cookie-0.1.1.js"></script>
+    <script>
+        var myformEle = document.getElementById('myform');
+        myformEle.onsubmit = function(e) {
+            e.preventDefault();
+            var username = this.username.value;
+            var password = this.password.value;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('post', 'login.php');
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4) {
+                    if (xhr.status == 200) {
+                        var res = JSON.parse(xhr.responseText);
+                        alert(res.msg);
+
+                        if (res.code == 2) {
+                            cookie('logged', true, {
+                                maxAge: 60 //单位是s!!!!!     8*24*60*60
+                            });
+                            location = 'index.html';
+                        } else {
+                            alert(res.msg);
+                            location = 'regist.html';
+                        }
+
+                    }
+                }
+            }
+            xhr.send('username=' + username + '&password=' + password);
+        }
+
+
+        // ajax({
+        //     type: 'post',
+        //     url: 'login.php',
+        //     data: {
+        //         username,
+        //         password
+        //     }
+        // }).then(res => {
+        //     alert(res.msg);
+        //     if (res.code == 2) {
+        //         cookie('logged', true, {
+        //             maxAge: 60 * 60
+        //         });
+        //         location: '/';
+        //     }
+        // });
+        // }
+    </script>
+</body>
+
+</html>
